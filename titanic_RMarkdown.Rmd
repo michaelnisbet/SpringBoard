@@ -1,0 +1,83 @@
+---
+title: "titanic"
+output: html_document
+---
+#Data Wrangling 2 Titantic
+
+
+## 0 Import the Data
+```{r}
+library(readr)
+library(tidyr)
+library(dplyr)
+
+
+titanic_original <- read_csv("C:/Users/Michael/Desktop/SpringBoard/titanic_original.csv")
+```
+
+
+##1 Change NA to S in Embarked
+
+
+```{r}
+titanic_original$embarked[titanic_original$embarked == ""] <- "S"
+```
+
+Test to see if any remaining NA
+
+```{r}
+which(is.na(titanic_original$embarked))
+```
+
+## 2 Find the mean Age and Replace NA values with it
+
+```{r}
+mean_age <- mean(titanic_original$age, na.rm = TRUE)
+
+titanic_age <- replace_na(titanic_original, replace = list(age = mean_age))
+```
+
+
+I would suggest using the median age potentially as the mean could be skewed to a younger or older age giving a a set of extremes on those ages. Additionally you could look to calcuate a mean based on one or two standard deviations, this may give a more accurate mean.
+
+
+## 3 LifeBoat fill in NONE
+
+```{r}
+titanic_lifeboat <- titanic_age %>%
+  replace_na(list(boat = "none"))
+```
+
+
+
+I could not get these following codes to work and I amnot sure why, also na would not change in cabing as well
+
+```{r}
+titanic_lifeboat <- titanic_age 
+titanic_lifeboat[titanic_lifeboat$boat == ""] <- "None"
+
+titanic_lifeboat$boat <- sub("^$", "none", titanic_lifeboat$boat)
+
+
+titanic_lifeboats <- titanic_age %>%
+  mutate(boat = sub("^$", "None", boat))  
+```
+
+  
+##4 Add Has a Cabin colum for if they did or did not
+
+
+```{r}
+titanic_cabin <- titanic_lifeboat %>% mutate(has_a_cabin = ifelse(cabin == "", "0", "1") )
+```
+
+It does not make sense to fill in missing cabin numbers with a value as they are all
+unique and distinct unless you could come up with a more accurate way to base where they
+might be located for cabins based on other variables.
+
+##5 Create CSV
+
+```{r}
+write.csv(titanic_cabin, "titanic_clean.csv")
+```
+
