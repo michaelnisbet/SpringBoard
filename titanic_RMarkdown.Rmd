@@ -2,6 +2,8 @@
 title: "titanic"
 output: html_document
 ---
+
+
 #Data Wrangling 2 Titantic
 
 
